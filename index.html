@@ -561,8 +561,14 @@ const MELODY=[['C4','E4','G4','C5'],['G2','D4','G4','D5'],['A2','C4','E4','A4'],
 function sndInit(){if(SND.ac)return;const ac=new (window.AudioContext||window.webkitAudioContext)();SND.ac=ac;const g=ac.createGain();g.gain.value=.5;g.connect(ac.destination);SND.master=g;SND.nextAt=ac.currentTime+.1;}
 function tone(freq,t0,dur,type,vol){const ac=SND.ac;const o=ac.createOscillator(),g=ac.createGain();o.type=type||'triangle';o.frequency.value=freq;g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+.02);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);o.connect(g);g.connect(SND.master);o.start(t0);o.stop(t0+dur+.05);}
 function noise(t0,dur,vol,hp){const ac=SND.ac;const n=ac.sampleRate*dur,b=ac.createBuffer(1,n,ac.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);const s=ac.createBufferSource();s.buffer=b;const f=ac.createBiquadFilter();f.type=hp?'highpass':'lowpass';f.frequency.value=hp||1200;const g=ac.createGain();g.gain.value=vol;s.connect(f);f.connect(g);g.connect(SND.master);s.start(t0);}
-function sndWake(){if(!SND.on)return;sndInit();if(SND.ac.state==='suspended')SND.ac.resume().catch(()=>{});if(SND.nextAt<SND.ac.currentTime)SND.nextAt=SND.ac.currentTime+.1;}
-addEventListener('pointerdown',sndWake,{capture:true});addEventListener('keydown',sndWake,{capture:true});
+// phones suspend (or 'interrupt') audio when you switch away; wake it on return and on the next touch, rebuilding it if needed
+function sndRebuild(){try{SND.ac&&SND.ac.close();}catch(e){}SND.ac=null;sndInit();}
+function sndWake(){if(!SND.on)return;sndInit();const ac=SND.ac;
+  if(ac.state!=='running')ac.resume().then(()=>{if(ac===SND.ac&&ac.state!=='running'&&!document.hidden)sndRebuild();}).catch(()=>{if(!document.hidden)sndRebuild();});
+  if(SND.nextAt<ac.currentTime)SND.nextAt=ac.currentTime+.1;}
+document.addEventListener('visibilitychange',()=>{if(!SND.ac)return;if(document.hidden)SND.ac.suspend().catch(()=>{});else sndWake();});
+addEventListener('pageshow',()=>{if(SND.ac)sndWake();});addEventListener('focus',()=>{if(SND.ac)sndWake();});
+addEventListener('pointerdown',sndWake,{capture:true});addEventListener('touchend',sndWake,{capture:true});addEventListener('keydown',sndWake,{capture:true});
 let OUTRO_MUSIC=false; // the music keeps playing, a little slower, through the photos and the dedication
 function musicTick(){if(!SND.on||!SND.ac||(paused&&!OUTRO_MUSIC))return;const ac=SND.ac;const beat=OUTRO_MUSIC?.56:S&&S.night?.62:.46;
   if(SND.nextAt<ac.currentTime-.05)SND.nextAt=ac.currentTime+.05; // don't rush to catch up after a pause
@@ -1040,8 +1046,8 @@ const TITLE={name:'',start:{x:-100,y:-100},bounds:[0,0,0,0],spots:[],intro:[],sa
 };
 function startTitle(){OUTRO_MUSIC=false;S=TITLE;S.init();paused=false;whereEl.textContent='';clearSay();
   let saved=0;try{saved=parseInt(localStorage.getItem('stellas-day')||'0')||0;}catch(e){}
-  const begin=()=>{save(0);go(0);};
-  const btns=[];if(saved>0&&saved<SCENES.length)btns.push(['Continue where she left off',()=>go(saved),true]);
+  const begin=()=>{recordPlay();save(0);go(0);};
+  const btns=[];if(saved>0&&saved<SCENES.length)btns.push(['Continue where she left off',()=>{recordPlay();go(saved);},true]);
   card("Stella's Day",[TOUCH?'~Tap to begin':'~Click to begin'],btns,{title:true});
   const p=cardEl.querySelector('p');p.classList.add('blink');
   const pc=document.createElement('p');pc.className='plays';pc.hidden=true;p.after(pc);playCount().then(n=>{if(n>0&&S===TITLE){pc.textContent=playsLine(n);pc.hidden=false;}});

@@ -113,7 +113,7 @@ The end screen lets anyone share a memory of Stella, and shows how many people h
   `approved` set to `false`. The person who wrote one still sees it on their own screen.
 - **To approve:** open the Supabase dashboard → stellas-day → **Table Editor** → `memories`,
   and tick `approved` on the ones you want shown. Un-tick to hide one again, or delete the row.
-- **The count** goes up once per browser, the first time someone reaches the end.
+- **The count** goes up once per browser, the first time someone starts the game.
 - **Built-in limits:** 300 characters, no links, a few memories per person per day.
 - **Keeping it awake:** free Supabase projects pause after a quiet week. The
   `Keep memories awake` workflow (in the repo's Actions tab) checks in once a day so that
