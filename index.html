@@ -6,7 +6,9 @@
 <meta name="description" content="A short pixel-art game about one day in the life of Stella, a very good dog.">
 <meta property="og:title" content="Stella's Day">
 <meta property="og:description" content="One day as Stell Bell: the backyard, the beach, the couch, night patrol, and that early-morning visit.">
-<meta property="og:image" content="media/p14.jpg">
+<meta property="og:image" content="https://maxwellgattuso.github.io/stellas-day/photos/2026-09-18_on-the-cabin-deck-portrait_01.jpg">
+<meta property="og:url" content="https://maxwellgattuso.github.io/stellas-day/">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22><rect width=%2216%22 height=%2216%22 fill=%22%235a3418%22/><circle cx=%225%22 cy=%226%22 r=%222%22 fill=%22%23f6d98a%22/><circle cx=%2211%22 cy=%226%22 r=%222%22 fill=%22%23f6d98a%22/><ellipse cx=%228%22 cy=%2211%22 rx=%224%22 ry=%223%22 fill=%22%23f6d98a%22/></svg>">
 <style>html{color-scheme:dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Stella's Day</title>
@@ -50,13 +52,19 @@ canvas{display:block;width:100%;height:100%;image-rendering:pixelated;image-rend
 .bubble.below .dots i:nth-child(2){top:auto;bottom:calc(var(--u) * 5.5px)}
 .bubble img{width:max(calc(var(--u) * 15px),30px);height:max(calc(var(--u) * 14.3px),29px);image-rendering:pixelated;flex:0 0 auto;background:#efe4c8;border:calc(var(--u) * .7px) solid #c9a46a}
 .bubble span{min-width:0}
-html.portrait .wrap{width:100%;padding-block:8px 12px;gap:6px}
+html.portrait .wrap{width:min(100%,calc((100dvh - 120px) * var(--ar)));padding-block:8px 12px;gap:6px}
+html.portrait .outro .ph{padding-bottom:24%}
+html.short .wrap{width:min(100%,calc((100dvh - 62px) * var(--ar)));padding-block:4px 6px;gap:2px}
+html.short h1{font-size:1.05rem}
+html.short .where,html.short .fs{font-size:.7rem;padding:.15em .5em}
+html.short .hint{display:none}
+html.short .stage{margin:4px 0}
 html.portrait h1{font-size:1.25rem}
 html.portrait .where{font-size:.75rem;padding:.2em .6em}
 html.portrait .fs{font-size:.72rem;padding:.25em .6em}
 html.portrait .hint{font-size:.85rem}
 html.touch .kb{display:none}
-.pad{position:absolute;left:3%;bottom:3%;width:min(30%,140px);aspect-ratio:1;display:none;z-index:2;touch-action:none;user-select:none;-webkit-user-select:none}
+.pad{position:absolute;left:3%;bottom:3%;height:min(40%,140px);width:auto;aspect-ratio:1;display:none;z-index:2;touch-action:none;user-select:none;-webkit-user-select:none}
 html.touch .pad{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr)}
 .pad b{display:block;background:rgba(243,223,174,.42);border:2px solid rgba(90,52,24,.6);box-sizing:border-box;position:relative}
 .pad b:active,.pad b.on{background:rgba(217,147,63,.85)}
@@ -70,8 +78,8 @@ html.touch .pad{display:grid;grid-template-columns:repeat(3,1fr);grid-template-r
 .card-in{background:var(--panel);color:var(--ink);box-shadow:0 0 0 3px #b8783b,0 0 0 6px #5a3418,inset 0 0 0 2px #fff2cf;padding:20px 22px;max-width:440px;width:100%;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
 .card.title{align-items:center;padding-bottom:0;cursor:pointer}
 .card.title .card-in{max-width:min(92%,640px);padding:clamp(18px,4vw,40px) clamp(18px,5vw,48px);gap:clamp(8px,2vw,18px);background:rgba(243,223,174,.96)}
-.card.title h2{font-size:clamp(2.4rem,9vw,5rem);letter-spacing:.02em;line-height:1}
-.card.title p{font-size:clamp(1.1rem,3vw,1.7rem)}
+.card.title h2{font-size:clamp(1.8rem,min(9vw,calc(var(--u) * 24px)),5rem);letter-spacing:.02em;line-height:1}
+.card.title p{font-size:clamp(1rem,min(3vw,calc(var(--u) * 8px)),1.7rem)}
 .card.title .blink{animation:blink 1.4s steps(2,start) infinite}
 @keyframes blink{to{visibility:hidden}}
 @media (prefers-reduced-motion:reduce){.card.title .blink{animation:none}}
@@ -85,6 +93,7 @@ html.touch .pad{display:grid;grid-template-columns:repeat(3,1fr);grid-template-r
 .outro .ph img{max-width:100%;max-height:100%;object-fit:contain;border:calc(var(--u) * 1.2px) solid #f3dfae;box-shadow:0 0 0 calc(var(--u) * 1.2px) #5a3418,0 calc(var(--u) * 4px) calc(var(--u) * 10px) rgba(0,0,0,.6);background:#000}
 .outro .cap{position:absolute;left:50%;bottom:5%;transform:translateX(-50%);max-width:88%;background:#fff8e6;color:var(--ink);font-size:max(calc(var(--u) * 7px),15px);line-height:1.05;padding:calc(var(--u) * 2.5px) calc(var(--u) * 4px);border:calc(var(--u) * 1px) solid #5a3418;clip-path:polygon(calc(var(--u) * 2px) 0,calc(100% - var(--u) * 2px) 0,100% calc(var(--u) * 2px),100% calc(100% - var(--u) * 2px),calc(100% - var(--u) * 2px) 100%,calc(var(--u) * 2px) 100%,0 calc(100% - var(--u) * 2px),0 calc(var(--u) * 2px));text-align:center;text-wrap:balance;opacity:0;transition:opacity .6s}
 .outro .cap.on{opacity:1}
+.outro .cap.empty{display:none}
 .outro .fin{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--u) * 4px);text-align:center;padding:6%;opacity:0;transition:opacity 1.2s;pointer-events:none}
 .outro .fin.on{opacity:1;pointer-events:auto}
 .outro .fin h2{font-family:var(--display);font-weight:700;color:var(--gold);font-size:clamp(1.8rem,6vw,3.6rem);margin:0;text-shadow:2px 2px 0 #3b2010}
@@ -115,8 +124,8 @@ button:focus-visible{outline:3px solid #fff2cf;outline-offset:3px}
     <div class="pad" id="pad" aria-hidden="true"><b data-k="u"></b><b data-k="l"></b><b data-k="r"></b><b data-k="d"></b></div>
     <div class="bubble" id="bub" hidden><img id="face" alt=""><span id="say" aria-live="polite"></span><span class="dots"><i></i><i></i></span></div>
   </div>
-  <p class="hint"><span class="kb">Arrow keys or WASD to move, or tap where you want her to go.</span><span class="tc" hidden>Tap where you want her to go, or use the pad.</span> Sparkling spots are things to do. There's no hurry. <span class="kb" style="opacity:.6">Press ` for debug.</span></p>
-  <div class="debug" id="debug" hidden><span>Jump to:</span></div>
+  <p class="hint"><span class="kb">Arrow keys or WASD to move, or tap where you want her to go.</span><span class="tc" hidden>Tap where you want her to go, or use the pad.</span> Sparkling spots are things to do. There's no hurry.</p>
+  <div class="debug" id="debug" hidden><span id="dbgcfg"></span><span>Jump to:</span></div>
 </div>
 
 <script>
@@ -126,7 +135,8 @@ const W=320,H=200,B=2; // world size; drawn at 2x so the 1.5x camera lands on wh
 let VW=W,VH=H; // on-screen view size in world units (portrait phones use a taller view)
 const TOUCH=matchMedia('(pointer:coarse)').matches;if(TOUCH){document.documentElement.classList.add('touch');$('.tc').hidden=false;}
 if(!document.fullscreenEnabled)$('#fs').hidden=true;
-function layout(){const portrait=innerWidth<700&&innerHeight>innerWidth;document.documentElement.classList.toggle('portrait',portrait);
+function layout(){const portrait=innerHeight>innerWidth*1.1&&innerWidth<1100;document.documentElement.classList.toggle('portrait',portrait);
+  document.documentElement.classList.toggle('short',!portrait&&innerHeight<520);
   const nvw=portrait?180:W,nvh=portrait?240:H;if(nvw===VW&&nvh===VH&&cv.width===VW*B)return;VW=nvw;VH=nvh;cv.width=VW*B;cv.height=VH*B;
   wrap.style.setProperty('--ar',(VW/VH).toFixed(4));if(window.__ready)camSnap();}
 addEventListener('resize',layout);
@@ -277,7 +287,12 @@ function fir(x,base,w,h,dark,light){
   for(let k=2;k>=0;k--){const top=base-h+k*h*.26,th=h*.42,tw=w*(.7+k*.15);
     for(let j=0;j<th;j+=2){const ww=Math.max(2,Math.round(j/th*tw));px(x-ww/2,top+j,ww,2,(j/2)%2?dark:light);px(x+ww/2-1,top+j,1,2,dark);}}
 }
-function grass(x0,y0,w,h,sun){
+const _layers={};
+function layer(key,x0,y0,w,h,fn){let c=_layers[key];if(!c){c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');const orig=px;
+  px=(x,y,ww,hh,col)=>{g.fillStyle=col;g.fillRect(Math.round(x)-x0,Math.round(y)-y0,Math.round(ww),Math.round(hh));};try{fn();}finally{px=orig;}_layers[key]=c;}
+  ctx.drawImage(c,x0,y0);}
+function grass(x0,y0,w,h,sun){layer('g'+[x0,y0,w,h,sun?[sun.x,sun.y,sun.rx,sun.ry]:0].join(','),x0,y0,w,h,()=>grassRaw(x0,y0,w,h,sun));}
+function grassRaw(x0,y0,w,h,sun){
   px(x0,y0,w,h,'#6ca94a');
   if(sun)for(let y=y0;y<y0+h;y+=2)for(let x=x0;x<x0+w;x+=2){if((x-sun.x)**2/sun.rx**2+(y-sun.y)**2/sun.ry**2<1&&nz(x,y)<.75)px(x,y,2,2,'#90cc62');}
   for(let y=y0;y<y0+h;y+=3)for(let x=x0;x<x0+w;x+=3){const r=nz(x,y);
@@ -285,9 +300,8 @@ function grass(x0,y0,w,h,sun){
 }
 function floorWood(x0,y0,w,h,c1,c2){px(x0,y0,w,h,c1);for(let y=y0;y<y0+h;y+=8){px(x0,y,w,1,c2);for(let x=x0+((y/8)%2?18:0);x<x0+w;x+=36)px(x,y,1,8,c2);}}
 const CIRC=[[6,0],[6,1],[6,2],[5,3],[4,4],[3,5],[2,6],[1,6],[0,6]];
-function wallpaper(x0,y0,w,h){px(x0,y0,w,h,'#4a221e');ctx.save();ctx.beginPath();ctx.rect(x0,y0,w,h);ctx.clip();
-  for(let cy=y0;cy<y0+h+10;cy+=10)for(let cx=x0;cx<x0+w+10;cx+=10)for(const [a,b] of CIRC)for(const sx of [1,-1])for(const sy of [1,-1])px(cx+a*sx,cy+b*sy,1,1,'#9a4b3c');
-  ctx.restore();}
+function wallpaper(x0,y0,w,h){layer('w'+[x0,y0,w,h].join(','),x0,y0,w,h,()=>{px(x0,y0,w,h,'#4a221e');
+  for(let cy=y0;cy<y0+h+10;cy+=10)for(let cx=x0;cx<x0+w+10;cx+=10)for(const [a,b] of CIRC)for(const sx of [1,-1])for(const sy of [1,-1])px(cx+a*sx,cy+b*sy,1,1,'#9a4b3c');});}
 function log(x,y,len,r){rr(x,y,len,r*2,'#cdbda4','#6e5a44');px(x+2,y+r,len-4,1,'#b5a58c');px(x+3,y+2,len-6,1,'#e2d5bc');rr(x+len-3,y-1,4,r*2+2,'#dccbb0','#6e5a44');}
 function ball(x,y,c1,c2){rr(x,y,4,4,c1||'#d9ea4e',c2||'#7a8a1e');px(x+1,y+1,1,1,'#ffffffaa');}
 function zzz(x,y,c){for(let i=0;i<3;i++){const k=(time*.5+i/3)%1;ctx.globalAlpha=1-k;ptxt('z',x+i*5+k*8,y-k*14-i*2,c,1+(i>0?1:0));}ctx.globalAlpha=1;}
@@ -365,7 +379,7 @@ function camTarget(){const vw=VW/cam.s,vh=VH/cam.s;return {x:Math.round(Math.min
 function camSnap(){const t=camTarget();cam.x=t.x;cam.y=t.y;}
 // the camera locks to her exactly (no easing), so she never jitters against the background
 function camFollow(dt){const t=camTarget();cam.x=t.x;cam.y=t.y;}
-function view(){if(S.zoom)return S.zoom;if(S===TITLE){if(VW===W)return null;const s=Math.max(VW/W,VH/H,1.2);return {s,x:Math.round(Math.min(W-VW/s,Math.max(0,214-VW/s/2))),y:Math.round(Math.max(0,H-VH/s))};}return {s:cam.s,x:Math.round(cam.x),y:Math.round(cam.y)};}
+function view(){if(S.focus){const f=S.focus,s=f.s,vw=VW/s,vh=VH/s;return {s,x:Math.round(Math.min(W-vw,Math.max(0,f.x-vw/2))),y:Math.round(Math.min(H-vh,Math.max(0,f.y-vh/2)))};}if(S===TITLE){if(VW===W)return null;const s=Math.max(VW/W,VH/H,1.2);return {s,x:Math.round(Math.min(W-VW/s,Math.max(0,214-VW/s/2))),y:Math.round(Math.max(0,H-VH/s))};}return {s:cam.s,x:Math.round(cam.x),y:Math.round(cam.y)};}
 const dog={x:0,y:0,face:1,moving:false,anim:null,wet:0,sandy:0,carry:false,special:null,idle:0,nextIdle:5,wasInWater:false};
 let target=null;const keys=new Set();let timers=[];
 function after(s,fn){timers.push({t:s,fn});}
@@ -448,7 +462,7 @@ const SCENES=[
     for(let y=64;y<110;y+=3)for(let x=0;x<W;x+=3){if(nz(x+((t*6)|0),y)<.05)px(x,y,2,1,y<80?'#fff2c8':'#9cc7e8');}
     for(let x=0;x<W;x+=4){const o=Math.round(Math.sin(x*.08+t*1.5)*1.5);px(x,109+o,4,3,'#f0e6d2');}
     px(0,112,W,88,'#c8b89a');
-    for(let y=112;y<H;y+=2)for(let x=0;x<W;x+=2){const r=nz(x,y);if(r<.06)px(x,y,1,1,'#a89a80');else if(r>.96)px(x,y,1,1,'#e6dac0');}
+    layer('sand',0,112,W,H-112,()=>{for(let y=112;y<H;y+=2)for(let x=0;x<W;x+=2){const r=nz(x,y);if(r<.06)px(x,y,1,1,'#a89a80');else if(r>.96)px(x,y,1,1,'#e6dac0');}});
     for(let y=130;y<H;y+=12)for(let x=0;x<W;x+=24)px(x+(y/12%2?12:0),y,10,1,'#bcab8c');
     log(14,120,70,4);log(196,118,90,5);px(260,110,4,10,'#b7a68c');log(236,160,52,4);
     person(40,132,{...MAX,shirt:'#2b2b33',pants:'#2b2b33',beanie:'#6a5a4a'});person(58,132,{...OLI,shirt:'#2b2b33',pants:'#2b2b33',beanie:'#8a7a6a'});
@@ -473,16 +487,18 @@ const SCENES=[
   exit:{x:22,y:186,r:16,act(){card('Back home',['Sandy, salty, and very pleased with herself.'],'Go home',{then:()=>go(2)});}}
 },
 { // 2 the hose
-  name:'6:20 pm · the hose',start:{x:150,y:160,face:-1},bounds:[150,160,150,160],save:false,zoom:{s:2,x:70,y:106},
+  name:'6:20 pm · the hose',start:{x:150,y:160,face:-1},bounds:[150,160,150,160],save:false,focus:{s:2,x:128,y:146},
   intro:["Vertical water.","Why.","..."],
   init(){crowsInit.call(this);this.t=0;dog.wet=1;dog.special={x:150,y:160,face:-1,pose:'stand',tuck:true};this.sfxT=0;},
   update(dt){this.t+=dt;crowsUpdate.call(this,dt);this.sfxT-=dt;if(this.sfxT<=0){sfx('hose');this.sfxT=1.1;}},
   bg(t){yard(t,{sky:'#9fc8e8',sky2:'#d6e4ec'});crowsDraw.call(this,t);
     person(96,134,{...OLI,shirt:'#7a8a6a'});
-    // hose from the house to Olivia's hand, then an arc of water onto Stella
-    px(60,128,36,2,'#2f6a3a');px(94,122,2,8,'#2f6a3a');px(106,118,8,2,'#2f6a3a');px(112,117,3,3,'#8a8a8a');
-    const k=this.t;for(let i=0;i<22;i++){const u=i/22,ax=116+u*26,ay=118+u*u*30+Math.sin(k*18+i)*1;if(Math.floor(k*20+i)%3)px(ax,ay,2,1,'#8fc8f0');}
-    for(let i=0;i<8;i++){const kk=(k*2.5+i/8)%1;px(140+((i*13)%26),142+kk*18,1,1,`rgba(140,200,240,${1-kk})`);}
+    // hose runs from the spigot by the door along the grass to Mom's hand
+    px(60,128,2,8,'#8a8a8a');px(60,136,4,2,'#2f6a3a');px(62,137,30,2,'#2f6a3a');px(90,139,2,10,'#2f6a3a');px(91,148,18,2,'#2f6a3a');
+    px(107,148,4,3,'#2f6a3a');px(109,146,4,3,'#9a9a9a');px(108,150,3,2,OLI.skin);
+    // arc of water from the nozzle onto her back
+    const k=this.t;for(let i=0;i<24;i++){const u=i/24,ax=113+u*30,ay=146-Math.sin(u*Math.PI)*14+u*2+Math.sin(k*18+i)*.6;if(Math.floor(k*20+i)%3)px(ax,ay,2,1,'#8fc8f0');}
+    for(let i=0;i<9;i++){const kk=(k*2.5+i/9)%1;px(140+((i*7)%22),146+kk*16,1,1,`rgba(140,200,240,${1-kk})`);}
     px(128,170,44,6,'#5a8ab8');px(132,172,36,2,'#8fc0e0');
   },
   front(){yardFront();},
@@ -516,7 +532,7 @@ const SCENES=[
     // basement (right)
     wallpaper(178,0,142,112);
     rr(198,14,92,54,'#cfd3d6','#1b1a1f');px(206,54,76,6,'#aab0b8');
-    px(178,112,142,88,'#8a8580');for(let y=112;y<H;y+=2)for(let x=178;x<W;x+=2)if(nz(x,y)<.15)px(x,y,1,1,'#7a7570');
+    layer('carpet',178,112,142,88,()=>{px(178,112,142,88,'#8a8580');for(let y=112;y<H;y+=2)for(let x=178;x<W;x+=2)if(nz(x,y)<.15)px(x,y,1,1,'#7a7570');});
     rr(186,84,60,30,'#9a9995','#5e5e5c');px(190,88,20,10,'#d9793d');px(188,98,56,2,'#7d7c78');px(186,102,60,10,'#9a9995');
     personSit(212,72,MAX);
     px(232,94,10,8,'#e8a13a');px(234,96,6,4,'#f6c36a');
@@ -631,14 +647,35 @@ const SCENES=[
 function zoomies(i){const sc=SCENES[1],pup=sc.pups[i];const cx=Math.min(280,Math.max(60,(dog.x+pup.x)/2)),cy=Math.min(178,Math.max(132,(dog.y+pup.y)/2));
   sc.zoom={cx,cy,r:24,pup,a0:Math.atan2((dog.y-cy)*2,dog.x-cx),t:0};pup.play=3.6;sfx('bark');
   anim('zoom',3.4,()=>{sc.zoom=null;pup.play=.8;pup.moving=false;});}
-const POOL=[{"ch":"puppy","f":"p00.jpg","c":"Day one."},{"ch":"puppy","f":"p01.jpg","c":"Little me."},{"ch":"puppy","f":"p02.jpg","c":"Dad. Mine now."},{"ch":"puppy","f":"p03.jpg","c":"New bed. New people. New everything."},{"ch":"sun","f":"p04.jpg","c":"Warm spot. Mine."},{"ch":"sun","f":"p05.jpg","c":"The warmest spot."},{"ch":"sun","f":"p06.jpg","c":"Grass! Must roll."},{"ch":"sun","f":"p07.jpg","c":"Must. Roll."},{"ch":"sun","f":"p08.jpg","c":"Garden patrol. All quiet."},{"ch":"sun","f":"p09.jpg","c":"Sun through the window. Also mine."},{"ch":"sun","f":"p10.jpg","c":"Just checking on things."},{"ch":"sun","f":"p11.jpg","c":"Shoes. Grass. Perfect."},{"ch":"sun","f":"p12.jpg","c":"Waiting. Watching."},{"ch":"sun","f":"p13.jpg","c":"Paws crossed. Very proper."},{"ch":"sun","f":"p14.jpg","c":"Deck. Sun. Water. Yes."},{"ch":"sun","f":"p15.jpg","c":"Big field. Big day."},{"ch":"sun","f":"p16.jpg","c":"Park grass is also for rolling."},{"ch":"sun","f":"p17.jpg","c":"I sit here now."},{"ch":"beach","f":"p18.jpg","c":"The beach. All of it. Mine."},{"ch":"beach","f":"p19.jpg","c":"Sandy. Salty. Perfect."},{"ch":"beach","f":"p20.jpg","c":"Room to run."},{"ch":"beach","f":"p21.jpg","c":"The good water. The flat kind."},{"ch":"beach","f":"p22.jpg","c":"Dad came too."},{"ch":"beach","f":"p23.jpg","c":"Kisses. Salty ones."},{"ch":"beach","f":"p24.jpg","c":"Digging. Important digging."},{"ch":"beach","f":"p25.jpg","c":"My people."},{"ch":"beach","f":"p26.jpg","c":"Early beach. Best beach."},{"ch":"beach","f":"p27.jpg","c":"Lake water counts too."},{"ch":"beach","f":"p28.jpg","c":"Rocks. Water. Me."},{"ch":"beach","f":"p29.jpg","c":"Golden hour. Golden dog."},{"ch":"beach","f":"p30.jpg","c":"Mom. Beach. Mountains."},{"ch":"beach","f":"p31.jpg","c":"Vertical water. Why."},{"ch":"beach","f":"p32.jpg","c":"Checking the lake. Still good."},{"ch":"beach","f":"p33.jpg","c":"Low tide. Lots to sniff."},{"ch":"home","f":"p34.jpg","c":"Belly rubs. Obviously."},{"ch":"home","f":"p35.jpg","c":"Mom. Couch. Perfect."},{"ch":"home","f":"p36.jpg","c":"Kisses for Mom."},{"ch":"home","f":"p37.jpg","c":"Taylor Swift again. Fine."},{"ch":"home","f":"p38.jpg","c":"Upside down. Still comfy."},{"ch":"home","f":"p39.jpg","c":"Helping Dad work."},{"ch":"home","f":"p40.jpg","c":"Chin spot."},{"ch":"home","f":"p41.jpg","c":"Just a taste."},{"ch":"home","f":"p42.jpg","c":"Not begging. Just standing here."},{"ch":"home","f":"p43.jpg","c":"A goldfish! Thank you."},{"ch":"home","f":"p44.jpg","c":"Gelato. For me. Correct."},{"ch":"home","f":"p45.jpg","c":"Pup cup."},{"ch":"home","f":"p46.jpg","c":"My cake. My Dad."},{"ch":"home","f":"p47.jpg","c":"Matching. Obviously."},{"ch":"home","f":"p48.jpg","c":"Dad? Dad. Dad."},{"ch":"home","f":"p49.jpg","c":"Dad's hat. Looks better on me."},{"ch":"home","f":"p50.jpg","c":"Sharing is caring."},{"ch":"home","f":"p51.jpg","c":"I made Dad laugh."},{"ch":"home","f":"p52.jpg","c":"Basement. Belly. Up."},{"ch":"night","f":"p53.jpg","c":"Patrol. Hallway: clear."},{"ch":"night","f":"p54.jpg","c":"Checking on everyone."},{"ch":"night","f":"p55.jpg","c":"Watching the yard. Still ours."},{"ch":"night","f":"p56.jpg","c":"Front door: closed. Good."},{"ch":"night","f":"p57.jpg","c":"Someone should let me out. Or in."},{"ch":"night","f":"p58.jpg","c":"Peeking."},{"ch":"night","f":"p59.jpg","c":"Dusk rounds."},{"ch":"bed","f":"p60.jpg","c":"Close to Dad."},{"ch":"bed","f":"p61.jpg","c":"Close to Mom."},{"ch":"bed","f":"p62.jpg","c":"Right in the middle."},{"ch":"bed","f":"p63.jpg","c":"4:47. The best part."},{"ch":"bed","f":"p64.jpg","c":"Pillows are for dogs."},{"ch":"bed","f":"p65.jpg","c":"Dad's hoodie. Warm."},{"ch":"bed","f":"p66.jpg","c":"Everyone. All at once."},{"ch":"bed","f":"p67.jpg","c":"Zzz."},{"ch":"bed","f":"p68.jpg","c":"My bed. Fluffed. Perfect."},{"ch":"bed","f":"p69.jpg","c":"Close by."},{"ch":"bed","f":"p70.jpg","c":"Fish. Bed. Good night."},{"ch":"bed","f":"p71.jpg","c":"They're happy. I can tell. Me too."},{"ch":"sun","f":"v00.mp4","c":"Grass! Must roll.","v":1},{"ch":"beach","f":"v01.mp4","c":"Beach. Running. Sunset.","v":1},{"ch":"beach","f":"v02.mp4","c":"The flat water.","v":1},{"ch":"beach","f":"v03.mp4","c":"Swimming at sunset.","v":1},{"ch":"beach","f":"v04.mp4","c":"Swimming. Still swimming.","v":1},{"ch":"beach","f":"v05.mp4","c":"Digging. Very important.","v":1},{"ch":"beach","f":"v06.mp4","c":"Belly rubs. On the beach. Both.","v":1},{"ch":"home","f":"v07.mp4","c":"Kisses for Dad.","v":1},{"ch":"beach","f":"v08.mp4","c":"Sand roll. Tradition.","v":1},{"ch":"sun","f":"v09.mp4","c":"Parking lot grass counts.","v":1},{"ch":"beach","f":"v10.mp4","c":"Fetch with Dad.","v":1},{"ch":"sun","f":"v11.mp4","c":"Snow is for rolling too.","v":1}];
-const CHAPTERS=[['puppy',1],['sun',3],['beach',5],['home',4],['night',2],['bed',3]];
-function pickShow(){const out=[];for(const [ch,k] of CHAPTERS){const items=POOL.filter(p=>p.ch===ch).slice();for(let i=items.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[items[i],items[j]]=[items[j],items[i]];}
-  const chosen=items.slice(0,k);if(chosen.filter(p=>p.v).length>2)chosen.splice(chosen.findIndex(p=>p.v),1);out.push(...chosen);}return out;}
+/* ---------- end-of-day slideshow, configured by outro.json (see README.md) ---------- */
+let OUTRO=null,OUTRO_ERR=null;
+const outroReady=fetch('outro.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error('outro.json could not be loaded (HTTP '+r.status+')');return r.text();})
+  .then(t=>{try{OUTRO=JSON.parse(t);}catch(e){throw new Error('outro.json has a typo: '+e.message);}})
+  .catch(e=>{OUTRO_ERR=e.message;console.error("Stella's Day: "+e.message);})
+  .finally(()=>{const el=document.getElementById('dbgcfg');if(el)el.textContent=OUTRO_ERR?('⚠ '+OUTRO_ERR):('outro.json OK: '+(OUTRO.photos||[]).filter(p=>p&&!p.skip).length+' photos, showing '+OUTRO.howMany+' · ');});
+const isVid=p=>/\.(mp4|webm|mov|m4v)$/i.test(p.file);
+const mediaUrl=f=>/^(https?:)?\/\//.test(f)||f.includes('/')?f:'photos/'+f;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function pickShow(cfg){
+  const all=(cfg.photos||[]).filter(p=>p&&p.file&&!p.skip);
+  const chs=(cfg.chapters||[]).map(c=>typeof c==='string'?{name:c,share:1}:c).filter(c=>c&&c.name);
+  for(const p of all){const n=p.chapter||'other';if(!chs.some(c=>c.name===n))chs.push({name:n,share:1});}
+  let n=cfg.howMany==='all'?all.length:Math.max(0,Math.floor(+cfg.howMany||0));n=Math.min(n,all.length);
+  const maxV=cfg.maxVideos==null?Infinity:Math.max(0,+cfg.maxVideos);
+  const by={},picked={};let count=0,vids=0;
+  for(const c of chs){by[c.name]=shuffle(all.filter(p=>(p.chapter||'other')===c.name));picked[c.name]=by[c.name].filter(p=>p.pin);count+=picked[c.name].length;vids+=picked[c.name].filter(isVid).length;}
+  const tot=chs.reduce((a,c)=>a+Math.max(0,+c.share||0),0)||1;
+  while(count<n){let best=null,bd=-Infinity,bp=null;
+    for(const c of chs){const p=by[c.name].find(p=>!picked[c.name].includes(p)&&!(isVid(p)&&vids>=maxV));if(!p)continue;
+      const d=n*Math.max(0,+c.share||0)/tot-picked[c.name].length;if(d>bd){bd=d;best=c;bp=p;}}
+    if(!best)break;picked[best.name].push(bp);count++;if(isVid(bp))vids++;}
+  return chs.flatMap(c=>shuffle(picked[c.name]));}
 
-function showEnd(){
-  paused=true;clearSay();
-  const SHOW=pickShow();
+async function showEnd(){
+  paused=true;clearSay();save(0);
+  await outroReady;const cfg=OUTRO||{};
+  const SHOW=OUTRO?pickShow(cfg):[];
+  const secP=(+cfg.secondsPerPhoto||4.2)*1000,secV=(+cfg.secondsPerVideo||7)*1000;
   const o=document.createElement('div');o.className='outro';
   const mk=()=>{const d=document.createElement('div');d.className='ph';const im=document.createElement('img');im.alt='';const vd=document.createElement('video');vd.muted=true;vd.playsInline=true;vd.loop=true;vd.setAttribute('playsinline','');vd.hidden=true;d.append(im,vd);return [d,im,vd];};
   const A=mk(),B=mk();const layers=[A,B];
@@ -651,14 +688,17 @@ function showEnd(){
   const skip=document.createElement('button');skip.className='skip';skip.textContent='Skip';
   o.append(A[0],B[0],cap,fin,skip);stage.append(o);
   let i=-1,layer=0,timer=null,done=false;
-  const pre=n=>{const it=SHOW[n];if(!it||it.v)return;const q=new Image();q.src='media/'+it.f;};pre(0);pre(1);
+  const pre=n=>{const it=SHOW[n];if(!it||isVid(it))return;const q=new Image();q.src=mediaUrl(it.file);};pre(0);pre(1);
   function show(){if(done)return;i++;
     if(i>=SHOW.length){done=true;layers.forEach(([el,,vd])=>{el.classList.remove('on');vd.pause();});cap.classList.remove('on');fin.classList.add('on');skip.hidden=true;sfx('wake');return;}
     const it=SHOW[i];const [el,im,vd]=layers[layer];const [old,,ovd]=layers[1-layer];layer=1-layer;
-    const reveal=()=>{el.classList.add('on');old.classList.remove('on');setTimeout(()=>ovd.pause(),1100);cap.classList.remove('on');setTimeout(()=>{cap.textContent=it.c;cap.classList.add('on');},500);};
-    if(it.v){im.hidden=true;vd.hidden=false;vd.src='media/'+it.f;vd.oncanplay=()=>{vd.oncanplay=null;vd.play().catch(()=>{});reveal();};vd.load();}
-    else{vd.hidden=true;vd.removeAttribute('src');im.hidden=false;im.onload=reveal;im.src='media/'+it.f;}
-    pre(i+2);clearTimeout(timer);timer=setTimeout(show,it.v?7000:4200);}
+    const my=i;let shown=false;
+    const reveal=()=>{if(my!==i||shown)return;shown=true;el.classList.add('on');old.classList.remove('on');setTimeout(()=>ovd.pause(),1100);cap.classList.remove('on');setTimeout(()=>{cap.textContent=it.caption||'';cap.classList.toggle('empty',!it.caption);cap.classList.add('on');},500);
+      clearTimeout(timer);timer=setTimeout(show,isVid(it)?secV:secP);};
+    const fail=()=>{if(my!==i||shown)return;console.warn("Stella's Day: couldn't load "+it.file);layer=1-layer;clearTimeout(timer);timer=setTimeout(show,50);};
+    if(isVid(it)){im.hidden=true;vd.hidden=false;vd.onerror=fail;vd.src=mediaUrl(it.file);vd.oncanplay=()=>{vd.oncanplay=null;vd.play().catch(()=>{});reveal();};vd.load();}
+    else{vd.hidden=true;vd.onerror=null;vd.removeAttribute('src');im.hidden=false;im.onload=reveal;im.onerror=fail;im.src=mediaUrl(it.file);}
+    pre(i+2);clearTimeout(timer);timer=setTimeout(fail,8000);}
   o.addEventListener('click',e=>{if(e.target===again||e.target===skip)return;if(!done)show();});
   skip.onclick=e=>{e.stopPropagation();i=SHOW.length-1;show();};
   again.onclick=e=>{e.stopPropagation();clearTimeout(timer);o.remove();dog.wet=0;dog.sandy=0;save(0);paused=false;go(0);};
@@ -699,6 +739,7 @@ setInterval(()=>{DBG.querySelectorAll('button').forEach((b,i)=>b.classList.toggl
 const KEYMAP={ArrowLeft:'l',ArrowRight:'r',ArrowUp:'u',ArrowDown:'d',a:'l',d:'r',w:'u',s:'d',A:'l',D:'r',W:'u',S:'d'};
 addEventListener('keydown',e=>{const k=KEYMAP[e.key];if(k&&!paused){keys.add(k);e.preventDefault();}});
 addEventListener('keyup',e=>{const k=KEYMAP[e.key];if(k)keys.delete(k);});
+addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&S===TITLE&&!cardEl.hidden&&cardEl.onclick&&!(document.activeElement&&document.activeElement.tagName==='BUTTON')){e.preventDefault();cardEl.onclick({target:cardEl});}});
 addEventListener('blur',()=>keys.clear());
 (function(){const pad=$('#pad');const held=new Map();
   const set=(id,k)=>{const old=held.get(id);if(old===k)return;if(old)release(old);if(k){held.set(id,k);keys.add(k);pad.querySelector(`[data-k=${k}]`).classList.add('on');}};
@@ -763,6 +804,7 @@ function hud(){const req=S.spots.filter(h=>h.req!==false);if(!req.length)return;
   ptxt(n+'/'+req.length,X-11,7,n===req.length?'#7cf0a6':'#f3dfae',1,'center');}
 function draw(){
   if(!S)return;
+  ctx.setTransform(1,0,0,1,0,0);ctx.imageSmoothingEnabled=false;ctx.fillStyle='#120e0c';ctx.fillRect(0,0,cv.width,cv.height);
   ctx.setTransform(B,0,0,B,0,0);
   const Z=view();if(Z){ctx.save();ctx.scale(Z.s,Z.s);ctx.translate(-Z.x,-Z.y);}
   S.bg(time);
