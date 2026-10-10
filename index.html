@@ -179,8 +179,18 @@ function head(hx,hy,p,o){
   if(o.yawn){px(hx+6,hy+8,6,3,p.K);px(hx+7,hy+9,4,1,p.P);}
   else if(o.tongue)px(hx+8,hy+8,2,2,p.P);
 }
+const TAILSTYLE='B'; // Stella's feathered tail
+const TAILPATH={hang:[[6,7],[5,8],[4,9],[3,10],[2,11],[2,12],[2,13],[2,14]],up1:[[6,7],[5,6],[4,5],[4,4],[3,3],[3,2],[2,1]],up0:[[7,7],[7,6],[6,5],[6,4],[5,3],[5,2],[5,1]]};
+function fluffyTail(ox,oy,p,path,style,down){const K=p.K,n=path.length,fr=style==='A'?K:p.M;
+  for(let i=0;i<n;i++){const [x,y]=path[i],tip=i>=n-2,w=tip?1:(style==='C'&&i>1?3:2);px(ox+x,oy+y,w,2,K);}
+  // wisps along the underside (hanging) or the back edge (wagging), touching the tail
+  for(let i=1;i<n-1;i++){const [x,y]=path[i];if(style==='C'||i%2===0){if(down)px(ox+x-1,oy+y+1,1,1,fr);else px(ox+x-1,oy+y+1,1,1,fr);}}
+  if(style!=='A')for(let i=1;i<n-2;i+=2){const [x,y]=path[i];px(ox+x+1,oy+y,1,1,i%4===1?p.S:p.M);}
+  if(style==='C'){const [x,y]=path[n-1];if(down)px(ox+x-1,oy+y+1,1,1,p.M);else px(ox+x-1,oy+y,1,1,p.M);}
+}
 function tail(ox,oy,p,o){ // standing tail: hanging, wagging, slow wag, or tucked
   const K=p.tl||p.K;
+  if(p===C&&TAILSTYLE&&!o.tuck){if(o.wag){const f=Math.floor(time*(o.wagSpeed||10))%2;fluffyTail(ox,oy,p,f?TAILPATH.up1:TAILPATH.up0,TAILSTYLE,false);}else fluffyTail(ox,oy,p,TAILPATH.hang,TAILSTYLE,true);return;}
   if(o.tuck){px(ox+7,oy+10,1,6,K);px(ox+8,oy+13,1,3,K);return;}
   if(o.wag){const f=Math.floor(time*(o.wagSpeed||10))%2;
     if(f){px(ox+5,oy+6,2,2,K);px(ox+4,oy+4,2,2,K);px(ox+3,oy+2,2,2,K);}else{px(ox+6,oy+4,2,4,K);px(ox+5,oy+2,2,2,K);}return;}
@@ -552,7 +562,7 @@ function sfx(name,rate){if(!SND.on||!SND.ac)return;const now=performance.now()/1
     case 'pant':for(let i=0;i<4;i++)noise(t0+i*.18,.08,.07,1500);break;
     case 'crunch':for(let i=0;i<3;i++)noise(t0+i*.16,.05,.2,2500);break;
     case 'yawn':tone(260,t0,.5,'sine',.03);tone(200,t0+.3,.5,'sine',.03);break;
-    case 'train':noise(t0,2.5,.12,250);tone(55,t0,2.5,'sawtooth',.02);tone(440,t0+.6,.5,'sine',.02);tone(550,t0+.6,.5,'sine',.02);break;
+    case 'train':noise(t0,4.6,.12,250);tone(55,t0,4.6,'sawtooth',.02);tone(440,t0+.6,.5,'sine',.02);tone(550,t0+.6,.5,'sine',.02);break;
     case 'drip':tone(1200,t0,.08,'sine',.03);tone(900,t0+.1,.1,'sine',.02);break;
     case 'hose':noise(t0,1.2,.1,900);break;
   }}
@@ -579,12 +589,15 @@ function view(){if(S.focus)return fitView(Math.max(1,Math.round(B*S.focus.s)),S.
 const dog={x:0,y:0,face:1,moving:false,anim:null,wet:0,sandy:0,carry:false,special:null,idle:0,nextIdle:5,wasInWater:false};
 let target=null;const keys=new Set();let timers=[];
 function after(s,fn){timers.push({t:s,fn});}
-const ANIM_SFX={sniff:'sniff',sit:'thump',sitlook:'thump',train:'train',bounce:'bounce',wag:'pant',yawn:'yawn',shake:'shake',nap:'thump'};
+const ANIM_SFX={sniff:'sniff',sit:'thump',sitlook:'thump',train:'thump',bounce:'bounce',wag:'pant',yawn:'yawn',shake:'shake',nap:'thump'};
 function anim(type,dur,then,idle){dog.anim={type,t:0,dur,then,idle};if(ANIM_SFX[type])sfx(ANIM_SFX[type]);}
 let lines=[],lineT=0;
 function say(...t){lines.push(...t);if(lineT<=0)nextLine();}
 let dogScreen={x:160,y:150};
 function nextLine(){if(!lines.length){bub.hidden=true;return;}const s=lines.shift();sayEl.textContent=s;bub.hidden=false;lineT=Math.max(3.2,s.length*.07);placeBubble(dogScreen.x,dogScreen.y);}
+// while a thought is still showing she can walk around, but the next thing to do waits until she's done thinking
+function thinking(){return lineT>0||lines.length>0;}
+let MKA=1; // paw marker brightness: dims while she's thinking
 function clearSay(){lines=[];lineT=0;sayEl.textContent='';bub.hidden=true;}
 function placeBubble(x,y){const sw=stage.clientWidth,sh=stage.clientHeight,u=sw/VW;
   const below=(y-14)*u<sh*.22;bub.classList.toggle('below',below);bub.style.transform=below?'translate(0,0)':'translate(0,-100%)';
@@ -602,7 +615,7 @@ function card(title,paras,buttons,opts){ // buttons: [[label, fn, alt?], ...] or
 }
 function save(i){try{localStorage.setItem('stellas-day',String(i));}catch(e){}}
 function go(i){
-  sceneIdx=i;S=SCENES[i];S.spots.forEach(h=>{h.done=false;h.rearm=false;if('stage' in h)h.stage=0;});S.leaving=false;S.announced=false;timers=[];
+  sceneIdx=i;S=SCENES[i];S.spots.forEach(h=>{h.done=false;h.rearm=false;h.finished=false;if('stage' in h)h.stage=0;});S.leaving=false;S.announced=false;timers=[];
   if(i!==1&&i!==2){dog.wet=0;dog.sandy=0;}
   S.init&&S.init();dog.x=S.start.x;dog.y=S.start.y;dog.face=S.start.face||1;dog.anim=null;dog.special=null;dog.carry=false;target=null;dog.idle=0;dog.nextIdle=rnd(5,8);dog.wasInWater=false;
   camSnap();const V0=view();dogScreen={x:(dog.x-V0.x)*V0.s,y:(dog.y-18-V0.y)*V0.s};whereEl.textContent=S.name;clearSay();say(...S.intro);if(S.save!==false)save(i);
@@ -765,11 +778,11 @@ const SCENES=[
   auto(){card('Night',["Everyone's asleep. Well, almost everyone."],'Begin the patrol',{then:()=>go(4)});},autoDelay:1.2,
 },
 { // 4 night patrol
-  name:'11:58 pm · patrol',start:{x:60,y:166},bounds:[12,126,300,190],night:true,
+  name:'11:58 pm · patrol',start:{x:60,y:166},bounds:[12,126,300,190],night:true,zoomOut(){return !!this.trainSeq;},
   intro:["Everyone's asleep. Someone has to watch the house.","Front door first. Then my rounds."],
   readyLine:"4:47. Almost morning. Time to find my people.",
   times:['11:58','12:41','1:36','2:52','3:40','4:47'],
-  init(){this.train=-1;this.prints=[];this.lastPrint={x:dog.x,y:dog.y};this.side=0;},
+  init(){this.train=-1;this.trainSeq=false;this.prints=[];this.lastPrint={x:dog.x,y:dog.y};this.side=0;},
   update(dt){if(this.train>=0){this.train+=dt;if(this.train>5)this.train=-1;}
     if(Math.hypot(dog.x-this.lastPrint.x,dog.y-this.lastPrint.y)>9){this.side^=1;this.prints.push({x:dog.x+(this.side?3:-3)-dog.face*4,y:dog.y-1,t:0});this.lastPrint={x:dog.x,y:dog.y};if(this.prints.length>60)this.prints.shift();}
     for(const p of this.prints)p.t+=dt;},
@@ -814,7 +827,9 @@ const SCENES=[
     {x:72,y:134,r:16,act(){anim('sniff',2.2);say("Boxes. I used to be scared of these.","Now I'm not. Sniff. All clear.");}},
     {x:165,y:140,r:16,act(){dog.face=1;anim('drink',3.4);say("Thirsty. Glug glug glug glug glug.","Loud? I don't care. It's the middle of the night.");}},
     {x:210,y:172,r:16,act(){anim('tap',3);say("Tap tap tap. Tippy tap. My nails on the floor.","They say they can hear me from bed. Good.");}},
-    {x:226,y:136,r:18,act(){S.train=0;anim('train',4.4);say("The train.","I used to hide. Now I just listen. Ears up. I'm brave now.");}},
+    // the train: she sits, the camera pulls back to show the window, the train goes by, then it eases back in
+    {x:226,y:136,r:18,act(){S.trainSeq=true;anim('train',8,()=>{S.trainSeq=false;});
+      after(2.3,()=>{S.train=0;sfx('train');say("The train.","I used to hide. Now I just listen. Ears up. I'm brave now.");});}},
   ],
   exit:{x:300,y:140,r:16,act(){card('4:47 am',['The best part of the night.'],'Go to the bedroom',{then:()=>go(5)});}}
 },
@@ -848,9 +863,11 @@ const SCENES=[
     if(k>.5){ctx.fillStyle=`rgba(255,190,140,${(k-.5)*.3})`;ctx.fillRect(0,0,W,H);}
   },
   spots:[
-    {x:62,y:170,r:16,req:false,stage:0,act(){const h=this;if(h.stage===0){h.stage=1;h.done=false;h.rearm=true;dog.face=1;anim('dig',3.2);say("My bed. Needs fixing. Scratch scratch scratch. Scratch.","There. Fluffy. Perfect.");}
-      else{dog.special={x:62,y:166,face:1,pose:'sleep'};anim('nap',3.5,()=>{dog.special=null;dog.x=62;dog.y=172;});say("Mmm. Close to Dad. This is good.");}}},
-    {x:160,y:160,r:20,act(){dog.special={x:160,y:150,face:1,pose:'sleep',inBed:true};anim('nap',1e9);
+    // her own bed: scratch it into shape, then curl up in it for a bit
+    {x:62,y:170,r:16,req:false,act(){const h=this;h.finished=false;dog.face=1;
+      say("My bed. Needs fixing. Scratch scratch scratch. Scratch.","There. Fluffy. Perfect.","Mmm. Close to Dad. This is good.");
+      anim('dig',3.2,()=>{dog.special={x:62,y:166,face:1,pose:'sleep'};anim('nap',4.5,()=>{dog.special=null;dog.x=62;dog.y=172;h.finished=true;});});}},
+    {x:160,y:160,r:20,when:()=>SCENES[5].spots[0].finished,act(){dog.special={x:160,y:150,face:1,pose:'sleep',inBed:true};anim('nap',1e9);
       say("Or... up here. Right in the middle.","They're happy. I can tell. Me too.");after(10,()=>{sfx('wake');card('Morning',["The sun's up. The back door is open."],'One more look',{then:()=>go(6)});});}},
   ],
 },
@@ -986,11 +1003,12 @@ function startIdle(){const pick=Math.random();
   dog.nextIdle=rnd(6,11);}
 function update(dt){
   if(lineT>0){lineT-=dt;if(lineT<=0)nextLine();}
+  MKA+=((thinking()||dog.anim?.3:1)-MKA)*Math.min(1,dt*5);
   if(paused)return;
   musicTick();
   timers=timers.filter(tm=>{tm.t-=dt;if(tm.t<=0){tm.fn();return false;}return true;});
   S.update&&S.update(dt);
-  if(S===TITLE){ctx.restore();return;}
+  if(S===TITLE)return;
   camFollow(dt);
   if(dog.anim&&dog.anim.idle&&(keys.size||target)){dog.anim=null;dog.idle=0;}
   if(dog.anim){const a=dog.anim;a.t+=dt;if(a.t>=a.dur){dog.anim=null;a.then&&a.then();checkReady();}dog.moving=false;}
@@ -1011,8 +1029,8 @@ function update(dt){
     dog.wasInWater=inW;
     for(const h of S.spots){if(h.done||(h.when&&!h.when()))continue;const p=h.pos?h.pos():h,near=Math.hypot(dog.x-p.x,dog.y-p.y)<h.r;
       if(h.rearm){if(!near)h.rearm=false;continue;}
-      if(near){h.done=true;target=null;h.act();checkReady();break;}}
-    if(!dog.anim&&S.exit&&ready()&&!S.leaving&&Math.hypot(dog.x-S.exit.x,dog.y-S.exit.y)<S.exit.r){S.leaving=true;target=null;S.exit.act();}
+      if(near&&!thinking()){h.done=true;target=null;h.act();checkReady();break;}}
+    if(!dog.anim&&!thinking()&&S.exit&&ready()&&!S.leaving&&Math.hypot(dog.x-S.exit.x,dog.y-S.exit.y)<S.exit.r){S.leaving=true;target=null;S.exit.act();}
   }
 }
 const MK={
@@ -1044,7 +1062,7 @@ function draw(){
   if(S===TITLE){ctx.restore();return;}
   const marks=S.spots.filter(h=>!(h.done||(h.when&&!h.when()))).map(h=>{const p=h.pos?h.pos():h;return [p.x,h.pos?p.y-(p.p&&p.p.big?7:4):p.y,false,!!h.pos];});
   if(S.exit&&ready()&&!S.leaving)marks.push([S.exit.x,S.exit.y,true]);
-  for(const m of marks)if(!m[3])markerRing(m[0],m[1],m[2]);
+  ctx.globalAlpha=MKA;for(const m of marks)if(!m[3])markerRing(m[0],m[1],m[2]);ctx.globalAlpha=1;
   S.mid&&S.mid(time);
   const a=dog.anim,ty=a&&a.type,sp=dog.special,k=a?Math.min(a.t/a.dur,1):0;
   let x=Math.round(sp?sp.x:dog.x),y=Math.round(sp?sp.y:dog.y),face=sp?sp.face:dog.face;const x0=x,y0=y;
@@ -1053,7 +1071,7 @@ function draw(){
   if(sp&&sp.pose){pose=sp.pose;if(sp.tuck)o.tuck=true;}
   else if(ty==='nap')pose='sleep';
   else if(ty==='sit'||ty==='sitlook')pose='sit';
-  else if(ty==='train'){pose='sit';o.tuck=true;}
+  else if(ty==='train'){pose='sit';}
   else if(ty==='yawn'){pose='sit';o.yawn=k>.2&&k<.8;o.closed=o.yawn;}
   else if(ty==='scratch'){pose='sit';o.scratch=true;o.closed=true;sfx('dig',.28);}
   else if(ty==='shake'){o.frame=null;x+=Math.floor(time*30)%2?1:-1;}
@@ -1087,7 +1105,7 @@ function draw(){
   dogScreen={x:(x0+fx-Z.x)*Z.s,y:(y0+fy-BOX[pose][1]-Z.y)*Z.s,h:BOX[pose][1]*Z.s};
   if(sp&&sp.heart){const kk=(time*.6)%1;heart(x-6-kk*6,y-16-kk*10,'#f08aa0');}
   S.front&&S.front(time);
-  for(const m of marks)marker(m[0],m[1],m[2]);
+  ctx.globalAlpha=MKA;for(const m of marks)marker(m[0],m[1],m[2]);ctx.globalAlpha=1;
   ctx.restore();
   const HB=Math.max(1,Math.round(B));ctx.setTransform(HB,0,0,HB,0,0);
   hud(cv.width/HB);
