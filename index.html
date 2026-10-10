@@ -161,20 +161,23 @@ const rnd=(a,b)=>a+Math.random()*(b-a);
 const C={K:'#1b1a1f',D:'#2b2a33',M:'#3f3e4a',S:'#8b909d',L:'#c8cbd3',T:'#c98d4e',t:'#9a6430',W:'#f2ede3',P:'#e8899f'};
 const PG={K:'#5a3a16',D:'#d9a856',M:'#c4933f',T:'#e8c98c',t:'#c99e5a',W:'#f6ecd4',P:C.P};
 const PW={K:'#6a6560',D:'#eee8da',M:'#d8d2c4',T:'#e2d7c2',t:'#cdc2ab',W:'#ffffff',P:C.P};
+const MAGGIE={K:'#0d0d11',D:'#25242b',M:'#33323b',T:'#25242b',t:'#3a3942',W:'#25242b',ew:'#5a3a1c',mz:'#2c2b33',hi:'#4a4954',ear:'#34333c',tl:'#25242b',P:'#e07a8c',big:1.13};
+const BOONE={K:'#3a2410',D:'#cf9a5c',M:'#b9844a',T:'#cf9a5c',t:'#a8763e',W:'#f4ead6',ew:'#f4ead6',mz:'#2a221d',br:'#3a2a1c',ear:'#9a6a3a',tl:'#b9844a',P:C.P};
 const SPECK=[[1,1,'S'],[2,1,'S'],[5,2,'L'],[8,1,'S'],[9,1,'S'],[11,3,'S'],[3,4,'L'],[6,5,'S'],[10,5,'L'],[12,2,'S'],[1,3,'S'],[7,3,'S'],[4,2,'S'],[14,4,'S'],[15,1,'L'],[16,3,'S']];
 const HSPECK=[[2,1,'S'],[4,1,'L'],[1,3,'S'],[3,5,'S'],[5,2,'S'],[0,5,'S']];
 function speck(ox,oy,list,p,w,h){if(!p.S)return;for(const [x,y,c] of list){if(x<w&&y<h)px(ox+x,oy+y,1,1,p[c]);}}
 function head(hx,hy,p,o){
   rr(hx,hy,9,8,p.D,p.K);speck(hx+1,hy+1,HSPECK,p,7,6);
-  rr(hx-1,hy+2,4,6,p.D,p.K);px(hx,hy+5,2,2,p.t);
-  px(hx+4,hy+1,2,1,p.T);
-  if(o.closed)px(hx+5,hy+2,2,1,p.t);else{px(hx+5,hy+2,1,1,p.W);px(hx+6,hy+2,1,1,p.K);}
-  rr(hx+5,hy+3,7,5,p.T,p.K);px(hx+6,hy+4,4,1,p.D);px(hx+10,hy+4,2,2,p.K);px(hx+6,hy+6,2,1,p.W);
+  if(p.hi)px(hx+2,hy+1,4,1,p.hi);
+  rr(hx-1,hy+2,4,6,p.ear||p.D,p.K);px(hx,hy+5,2,2,p.t);
+  px(hx+4,hy+1,2,1,p.br||p.T);
+  if(o.closed)px(hx+5,hy+2,2,1,p.t);else{px(hx+5,hy+2,1,1,p.ew||p.W);px(hx+6,hy+2,1,1,p.K);}
+  rr(hx+5,hy+3,7,5,p.mz||p.T,p.K);px(hx+6,hy+4,4,1,p.mz?(p.hi||p.mz):p.D);px(hx+10,hy+4,2,2,p.K);if(!p.mz)px(hx+6,hy+6,2,1,p.W);
   if(o.yawn){px(hx+6,hy+8,6,3,p.K);px(hx+7,hy+9,4,1,p.P);}
   else if(o.tongue)px(hx+8,hy+8,2,2,p.P);
 }
 function tail(ox,oy,p,o){ // standing tail: hanging, wagging, slow wag, or tucked
-  const K=p.K;
+  const K=p.tl||p.K;
   if(o.tuck){px(ox+7,oy+10,1,6,K);px(ox+8,oy+13,1,3,K);return;}
   if(o.wag){const f=Math.floor(time*(o.wagSpeed||10))%2;
     if(f){px(ox+5,oy+6,2,2,K);px(ox+4,oy+4,2,2,K);px(ox+3,oy+2,2,2,K);}else{px(ox+6,oy+4,2,4,K);px(ox+5,oy+2,2,2,K);}return;}
@@ -186,8 +189,10 @@ function dogStand(ox,oy,p,o){
   for(const [lx,g] of [[8,0],[11,1],[17,1],[20,0]]){const dx=g?-sw:sw,lift=dx>0?1:0,x=ox+lx+dx,y=oy+12-lift;
     px(x,y,3,6,K);px(x+1,y,2,4,p.T);px(x+1,y+4,2,1,p.t);px(x+1,y+5,2,1,p.W);}
   rr(ox+7,oy+4,15,8,p.D,K);speck(ox+8,oy+5,SPECK,p,13,6);
+  if(p.hi)px(ox+9,oy+5,9,1,p.hi);
   px(ox+17,oy+10,4,1,p.W);px(ox+18,oy+9,3,1,p.W);
   head(ox+18,oy+(o.sniff?6:1),p,o);
+
 }
 function dogLie(ox,oy,p,o){
   const K=p.K;
@@ -229,6 +234,13 @@ function dogSit(ox,oy,p,o){
 }
 const BOX={stand:[30,18],lie:[32,11],sleep:[32,9],belly:[32,14],sit:[25,20]};
 const POSE={stand:dogStand,lie:dogLie,sleep:dogSleep,belly:dogBelly,sit:dogSit};
+const MOC=document.createElement('canvas');MOC.width=48;MOC.height=32;const MOX=MOC.getContext('2d');
+function drawDogBig(x,y,pose,p,o,s){ // a slightly bigger dog: drawn at 1x offscreen, then scaled up crisp
+  x=Math.round(x);y=Math.round(y);shadow(x,y,Math.round(22*s));MOX.clearRect(0,0,48,32);
+  const orig=px;px=(a,b,w,h,c)=>{MOX.fillStyle=c;MOX.fillRect(Math.round(a),Math.round(b),Math.round(w),Math.round(h));};
+  try{drawDog(24,30,pose,p,Object.assign({},o,{face:1,noShadow:true}));}finally{px=orig;}
+  ctx.save();ctx.imageSmoothingEnabled=false;ctx.translate(x,y);if((o.face||1)<0)ctx.scale(-1,1);ctx.drawImage(MOC,-24*s,-30*s,48*s,32*s);ctx.restore();
+}
 function drawDog(x,y,pose,p,o){
   const b=BOX[pose],ox=Math.round(x-b[0]/2),oy=Math.round(y-b[1]);
   if(!o.noShadow)shadow(Math.round(x),Math.round(y),pose==='sit'?16:22);
@@ -440,7 +452,7 @@ const SCENES=[
   name:'5:10 pm · the beach',start:{x:60,y:170},bounds:[16,74,308,190],water:112,people:[[47,158],[65,158]],solid:[[14,116,76,12],[196,114,94,12],[236,156,56,10],[36,130,36,28]],
   intro:["Salt. Wind. Friends somewhere. And a ball. I can smell the ball."],
   readyLine:"Wet. Sandy. Perfect. Home is that way.",
-  init(){this.zoom=null;this.dust=[];this.ball={state:'sand',x:124,y:150,t:0};this.pups=[{x:200,y:150,tx:220,ty:150,face:1,p:PG,wait:1,play:0},{x:270,y:176,tx:240,ty:170,face:-1,p:PW,wait:2,play:0}];this.gull={x:-20,y:30,active:false,next:rnd(3,8)};},
+  init(){this.zoom=null;this.dust=[];this.ball={state:'sand',x:124,y:150,t:0};this.pups=[{x:200,y:150,tx:220,ty:150,face:1,p:MAGGIE,wait:1,play:0},{x:270,y:176,tx:240,ty:170,face:-1,p:BOONE,wait:2,play:0}];this.gull={x:-20,y:30,active:false,next:rnd(3,8)};},
   update(dt){
     if(dog.y<this.water)dog.wet=1;
     const b=this.ball;if(b.state==='fly'){b.t+=dt;const k=Math.min(b.t,1);b.x=124+66*k;b.y=150-58*k-Math.sin(Math.PI*k)*50;if(k>=1){b.state='water';sfx('splash');}}
@@ -470,14 +482,14 @@ const SCENES=[
   },
   mid(t){
     for(const d of this.dust)px(d.x,d.y-d.t*4,2,1,`rgba(230,215,180,${1-d.t/.6})`);
-    for(const p of this.pups)drawDog(p.x,p.y,'stand',p.p,{face:p.face,frame:p.moving?Math.floor(t*10)%4:null,tongue:true,wag:p.play>0,wagSpeed:12});
+    for(const p of this.pups){const o={face:p.face,frame:p.moving?Math.floor(t*10)%4:null,tongue:true,wag:p.play>0,wagSpeed:12};if(p.p.big)drawDogBig(p.x,p.y,'stand',p.p,o,p.p.big);else drawDog(p.x,p.y,'stand',p.p,o);}
     const b=this.ball;
     if(b.state==='sand'||b.state==='rest'||b.state==='fly')ball(b.x-2,b.y-4);
     if(b.state==='water'){ball(188,90+Math.round(Math.sin(t*3)));px(184,95,12,1,'#bfe0f5');}
   },
   spots:[
-    {pos:()=>SCENES[1].pups[0],r:20,act(){zoomies(0);say("A FRIEND. Play bow. Zoomies!");}},
-    {pos:()=>SCENES[1].pups[1],r:20,act(){zoomies(1);say("Another friend! Everyone here is my friend.");}},
+    {pos:()=>SCENES[1].pups[0],r:20,act(){zoomies(0);say("MAGGIE! Play bow. Zoomies!");}},
+    {pos:()=>SCENES[1].pups[1],r:20,act(){zoomies(1);say("Boone! Everyone here is my friend.");}},
     {x:124,y:152,r:14,when:()=>SCENES[1].ball.state==='sand',act(){const b=SCENES[1].ball;b.state='fly';b.t=0;anim('bounce',1);sfx('bounce');say("The ball! It's going...","...into the water. Fine. I'll get it.");}},
     {x:190,y:94,r:16,when:()=>SCENES[1].ball.state==='water',act(){SCENES[1].ball.state='carried';dog.carry=true;anim('bounce',.7);say("Swimming. The good water. The flat kind.","Got it. Back to my people.");}},
     {x:62,y:166,r:18,when:()=>SCENES[1].ball.state==='carried',act(){const b=SCENES[1].ball;dog.carry=false;b.state='rest';b.x=56;b.y=160;dog.face=1;
@@ -818,7 +830,7 @@ function draw(){
   const Z=view();if(Z){ctx.save();ctx.scale(Z.s,Z.s);ctx.translate(-Z.x,-Z.y);}
   S.bg(time);
   if(S===TITLE){if(Z)ctx.restore();return;}
-  const marks=S.spots.filter(h=>!(h.done||(h.when&&!h.when()))).map(h=>{const p=h.pos?h.pos():h;return [p.x,h.pos?p.y-4:p.y,false,!!h.pos];});
+  const marks=S.spots.filter(h=>!(h.done||(h.when&&!h.when()))).map(h=>{const p=h.pos?h.pos():h;return [p.x,h.pos?p.y-(p.p&&p.p.big?7:4):p.y,false,!!h.pos];});
   if(S.exit&&ready()&&!S.leaving)marks.push([S.exit.x,S.exit.y,true]);
   for(const m of marks)if(!m[3])markerRing(m[0],m[1],m[2]);
   S.mid&&S.mid(time);
