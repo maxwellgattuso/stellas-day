@@ -97,7 +97,9 @@ html.touch .pad{display:grid;grid-template-columns:repeat(3,1fr);grid-template-r
 .outro .fin{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--u) * 4px);text-align:center;padding:6%;opacity:0;transition:opacity 1.2s;pointer-events:none}
 .outro .fin.on{opacity:1;pointer-events:auto}
 .outro .fin h2{font-family:var(--display);font-weight:700;color:var(--gold);font-size:clamp(1.8rem,6vw,3.6rem);margin:0;text-shadow:2px 2px 0 #3b2010}
-.outro .fin p{margin:0;color:#f2e6cf;font-size:clamp(1.05rem,2.6vw,1.5rem);max-width:40ch;line-height:1.15}
+.outro .fin p{margin:0;color:#f2e6cf;font-size:clamp(.95rem,min(2.3vw,3.2vh),1.35rem);max-width:46ch;line-height:1.2}
+html.short .outro .fin{padding:3% 6%;gap:4px}html.short .outro .fin h2{font-size:1.6rem}html.short .outro .fin p{font-size:.8rem;max-width:60ch;line-height:1.15}
+.outro .fin p.sig{color:var(--gold);font-style:italic;margin-top:calc(var(--u) * 2px)}
 .outro .skip{position:absolute;right:2%;top:2%;font:600 .8rem var(--display);background:rgba(90,52,24,.8);color:#ffe9b0;border:0;padding:.3em .8em;cursor:pointer;box-shadow:0 0 0 2px #2a1608;margin:0}
 .debug{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:6px 6px 0;font-family:var(--display);font-size:.8rem;color:#c9b28c}
 .debug button{font:600 .75rem var(--display);background:#3b2a20;color:#ffe9b0;padding:.3em .7em;margin:0;box-shadow:0 0 0 2px #2a1608}
@@ -921,10 +923,11 @@ async function showEnd(){
   const A=mk(),B=mk();const layers=[A,B];
   const cap=document.createElement('div');cap.className='cap';
   const fin=document.createElement('div');fin.className='fin';
-  const h=document.createElement('h2');h.textContent='Stell Bell. Stella Bella. Sweet pup.';
-  const p1=document.createElement('p');p1.textContent='Thank you for the afternoons in the sun, the swims and the sandy rolls, the couch and the concerts, every night patrol, and every early-morning visit.';
-  const p2=document.createElement('p');p2.textContent='You got braver every year. We were so proud of you.';
-  const again=document.createElement('button');again.textContent='Play again';fin.append(h,p1,p2,again);
+  const h=document.createElement('h2');h.textContent='For Stella';
+  const p1=document.createElement('p');p1.textContent="10 years of rolling in the grass, laying in the sun, swimming at the beach, morning snuggles, and so many more adventures. You were the best part of every day.";
+  const p2=document.createElement('p');p2.textContent="Thank you for being ours.";
+  const p3=document.createElement('p');p3.className='sig';p3.textContent='Love always, from Mom and Dad';
+  const again=document.createElement('button');again.textContent='Play again';fin.append(h,p1,p2,p3,again);
   const skip=document.createElement('button');skip.className='skip';skip.textContent='Skip';
   o.append(A[0],B[0],cap,fin,skip);stage.append(o);
   let i=-1,layer=0,timer=null,done=false;
