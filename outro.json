@@ -1,9 +1,9 @@
 {
   "_help": "Settings for the photo slideshow at the end of the game. See README.md for how to edit this file.",
-  "howMany": 18,
+  "howMany": 5,
   "secondsPerPhoto": 4.2,
   "secondsPerVideo": 7,
-  "maxVideos": 4,
+  "maxVideos": 2,
   "chapters": [
     {
       "name": "yard",

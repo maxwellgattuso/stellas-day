@@ -949,7 +949,7 @@ function pickShow(cfg){
   const tot=chs.reduce((a,c)=>a+Math.max(0,+c.share||0),0)||1;
   while(count<n){let best=null,bd=-Infinity,bp=null;
     for(const c of chs){const p=by[c.name].find(p=>!picked[c.name].includes(p)&&!(isVid(p)&&vids>=maxV));if(!p)continue;
-      const d=n*Math.max(0,+c.share||0)/tot-picked[c.name].length;if(d>bd){bd=d;best=c;bp=p;}}
+      const d=n*Math.max(0,+c.share||0)/tot-picked[c.name].length+Math.random()*.9;if(d>bd){bd=d;best=c;bp=p;}}
     if(!best)break;picked[best.name].push(bp);count++;if(isVid(bp))vids++;}
   return chs.flatMap(c=>shuffle(picked[c.name]));}
 
