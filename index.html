@@ -124,7 +124,7 @@ button:focus-visible{outline:3px solid #fff2cf;outline-offset:3px}
     <div class="pad" id="pad" aria-hidden="true"><b data-k="u"></b><b data-k="l"></b><b data-k="r"></b><b data-k="d"></b></div>
     <div class="bubble" id="bub" hidden><img id="face" alt=""><span id="say" aria-live="polite"></span><span class="dots"><i></i><i></i></span></div>
   </div>
-  <p class="hint"><span class="kb">Arrow keys or WASD to move, or tap where you want her to go.</span><span class="tc" hidden>Tap where you want her to go, or use the pad.</span> Bouncing gold arrows mark things to do; a green one means it's time to move on. There's no hurry.</p>
+  <p class="hint"><span class="kb">Arrow keys or WASD to move, or tap where you want her to go.</span><span class="tc" hidden>Tap where you want her to go, or use the pad.</span> Gold pawprints mark things to do; a green one means it's time to move on. There's no hurry.</p>
   <div class="debug" id="debug" hidden><span id="dbgcfg"></span><span>Jump to:</span></div>
 </div>
 
@@ -430,7 +430,7 @@ const SCENES=[
   spots:[
     {x:122,y:126,r:16,act(){anim('sniff',1.8);say("Sniff. Sniff sniff. A leaf. A very important leaf.");}},
     {x:266,y:122,r:16,act(){anim('sniff',1.8);say("Something was here. A bunny. I'm sure of it.");}},
-    {x:236,y:104,r:16,act(){anim('sniff',1,()=>{SCENES[0].bunny={t:0};anim('bounce',1.8);sfx('bark');say("BUNNY!","...gone. It's always gone. Tomorrow, bunny.");});}},
+    {x:236,y:104,r:16,when:()=>SCENES[0].spots[1].done,act(){anim('sniff',1,()=>{SCENES[0].bunny={t:0};anim('bounce',1.8);sfx('bark');say("BUNNY!","...gone. It's always gone. Tomorrow, bunny.");});}},
     {x:100,y:172,r:16,act(){anim('roll',2.4);say("Grass! Must roll. Must. Roll.");}},
     {x:226,y:156,r:18,act(){anim('nap',4);say("Warm spot. The warmest spot. This one's mine.");}},
   ],
@@ -792,14 +792,21 @@ function update(dt){
     if(!dog.anim&&S.exit&&ready()&&!S.leaving&&Math.hypot(dog.x-S.exit.x,dog.y-S.exit.y)<S.exit.r){S.leaving=true;target=null;S.exit.act();}
   }
 }
-const ARW=["ooooooooo","ohhhfffso",".ohfffso.","..ohfso..","...oso...","....o...."];
-const MKC={o:'#2b1a0e',h:'#fffbe0',f:'#ffd23f',s:'#d98a12'},MKX={o:'#10241a',h:'#efffef',f:'#74e89f',s:'#2a9c5a'};
+const MK={
+ paw:{p:{h:'#fff4c4',f:'#f6d98a',s:'#c99a3c'},g:["..hf.hf..","..fs.fs..","hf.....hf","fs.hff.fs","..hffff..",".hfffffs.",".ffffsss.","..fs.ss.."]},
+};
+for(const k in MK){const g=MK[k].g,w=Math.max(...g.map(r=>r.length)),h=g.length,G=g.map(r=>r.padEnd(w,'.').replace(/ /g,'.'));
+  const pts=[],ol=new Set();for(let y=0;y<h;y++)for(let x=0;x<w;x++){const c=G[y][x];if(c==='.')continue;pts.push([x,y,c]);
+    for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const X=x+dx,Y=y+dy;if(X<0||Y<0||X>=w||Y>=h||G[Y][X]==='.')ol.add(X+','+Y);}}
+  MK[k].pts=pts;MK[k].ol=[...ol].map(v=>v.split(',').map(Number));MK[k].w=w;MK[k].h=h;}
+const MKX={o:'#10241a',h:'#efffef',f:'#74e89f',s:'#2a9c5a',w:'#efffef'};
 function markerRing(x,y,strong){const k=(time*.9+(x*7+y*3)%10/10)%1,rx=3+k*8,ry=rx*.4,a=(1-k).toFixed(2);
   const c=strong?`rgba(116,232,159,${a})`:`rgba(255,210,63,${a})`,d=`rgba(43,26,14,${(a*.6).toFixed(2)})`;
   for(let i=0;i<20;i++){const t=i/20*6.283,qx=Math.round(x+Math.cos(t)*rx),qy=Math.round(y+Math.sin(t)*ry);px(qx,qy+1,1,1,d);px(qx,qy,1,1,c);}}
-function marker(x,y,strong){const P=strong?MKX:MKC,bob=Math.round(Math.sin(time*5)*1.6),x0=Math.round(x)-4,y0=Math.round(y)-21+bob;
-  for(let r=0;r<ARW.length;r++)for(let c=0;c<9;c++){const ch=ARW[r][c];if(ch!=='.')px(x0+c,y0+r,1,1,P[ch]);}
-  if(Math.floor(time*2.5)%3===0){px(x0+10,y0-2,1,1,P.h);px(x0-2,y0+1,1,1,P.h);}}
+function marker(x,y,strong){const M=MK.paw,P=strong?MKX:M.p,o=strong?MKX.o:'#2b1a0e',bob=Math.round(Math.sin(time*5)*1.6),
+  x0=Math.round(x)-(M.w>>1),y0=Math.round(y)-14-M.h+bob;
+  for(const [a,b] of M.ol)px(x0+a,y0+b,1,1,o);for(const [a,b,c] of M.pts)px(x0+a,y0+b,1,1,P[c]||P.f);
+  if(Math.floor(time*2.5)%3===0){px(x0+M.w+1,y0-2,1,1,P.h);px(x0-2,y0+1,1,1,P.h);}}
 function hud(){const req=S.spots.filter(h=>h.req!==false);if(!req.length)return;const n=req.filter(h=>h.done).length;const X=VW;
   rr(X-34,3,31,12,'#15161c','#2b2c36');
   px(X-30,8,2,2,'#f6d98a');px(X-27,6,2,2,'#f6d98a');px(X-24,6,2,2,'#f6d98a');px(X-21,8,2,2,'#f6d98a');px(X-28,10,6,3,'#f6d98a');
