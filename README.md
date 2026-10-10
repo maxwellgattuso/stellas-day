@@ -100,3 +100,22 @@ if not, roughly where the typo is.
 
 Press **`** (backtick) to show or hide it. It lets you jump to any chapter, preview the
 slideshow, and check that `outro.json` loaded. It stays hidden for everyone else.
+
+---
+
+## Shared memories and the play count
+
+The end screen lets anyone share a memory of Stella, and shows how many people have
+"spent a day with Stella" (also on the title screen). These live in a free
+[Supabase](https://supabase.com/dashboard) project called **stellas-day**.
+
+- **Nothing shows up until you approve it.** New memories wait in the `memories` table with
+  `approved` set to `false`. The person who wrote one still sees it on their own screen.
+- **To approve:** open the Supabase dashboard → stellas-day → **Table Editor** → `memories`,
+  and tick `approved` on the ones you want shown. Un-tick to hide one again, or delete the row.
+- **The count** goes up once per browser, the first time someone reaches the end.
+- **Built-in limits:** 300 characters, no links, a few memories per person per day.
+- **Keeping it awake:** free Supabase projects pause after a quiet week. The
+  `Keep memories awake` workflow (in the repo's Actions tab) checks in once a day so that
+  doesn't happen. If the project ever pauses, the game still works; the memories and count
+  just hide until you click **Resume project** in the dashboard.
