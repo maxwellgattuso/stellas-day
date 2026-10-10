@@ -127,7 +127,7 @@ let VW=W,VH=H; // on-screen view size in world units (portrait phones use a tall
 const TOUCH=matchMedia('(pointer:coarse)').matches;if(TOUCH){document.documentElement.classList.add('touch');$('.tc').hidden=false;}
 if(!document.fullscreenEnabled)$('#fs').hidden=true;
 function layout(){const portrait=innerWidth<700&&innerHeight>innerWidth;document.documentElement.classList.toggle('portrait',portrait);
-  const nvw=portrait?180:W,nvh=portrait?240:H;if(nvw===VW&&nvh===VH&&cv.width)return;VW=nvw;VH=nvh;cv.width=VW*B;cv.height=VH*B;
+  const nvw=portrait?180:W,nvh=portrait?240:H;if(nvw===VW&&nvh===VH&&cv.width===VW*B)return;VW=nvw;VH=nvh;cv.width=VW*B;cv.height=VH*B;
   wrap.style.setProperty('--ar',(VW/VH).toFixed(4));if(window.__ready)camSnap();}
 addEventListener('resize',layout);
 const bub=$('#bub'),wrap=$('.wrap'),stage=$('.stage');
