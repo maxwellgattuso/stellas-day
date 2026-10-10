@@ -1,16 +1,16 @@
 {
   "_help": "Settings for the photo slideshow at the end of the game. See README.md for how to edit this file.",
-  "howMany": 18,
+  "howMany": 5,
   "secondsPerPhoto": 4.2,
   "secondsPerVideo": 7,
-  "maxVideos": 3,
+  "maxVideos": 2,
   "chapters": [
     { "name": "puppy", "share": 1, "_about": "When she was little" },
-    { "name": "sun", "share": 3, "_about": "Yard, grass, sunny spots" },
-    { "name": "beach", "share": 5, "_about": "Beach, lakes, water" },
-    { "name": "home", "share": 4, "_about": "Couch, treats, Mom and Dad" },
-    { "name": "night", "share": 2, "_about": "Patrol, doors, hallways" },
-    { "name": "bed", "share": 3, "_about": "Bedtime and mornings" }
+    { "name": "sun", "share": 1, "_about": "Yard, grass, sunny spots" },
+    { "name": "beach", "share": 1, "_about": "Beach, lakes, water" },
+    { "name": "home", "share": 1, "_about": "Couch, treats, Mom and Dad" },
+    { "name": "night", "share": 1, "_about": "Patrol, doors, hallways" },
+    { "name": "bed", "share": 1, "_about": "Bedtime and mornings" }
   ],
   "photos": [
     { "file": "adoption-day-at-the-shelter.jpg", "chapter": "puppy", "caption": "Day one." },
