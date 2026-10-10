@@ -64,6 +64,9 @@ html.portrait .where{font-size:.75rem;padding:.2em .6em}
 html.portrait .fs{font-size:.72rem;padding:.25em .6em}
 html.portrait .hint{font-size:.85rem}
 html.touch .kb{display:none}
+.wrap,.stage,.stage *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+.stage{touch-action:none}.stage .outro .fin,.stage .outro .panel{touch-action:pan-y}
+.stage textarea,.stage input{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 .pad{position:absolute;left:3%;bottom:3%;height:min(40%,140px);width:auto;aspect-ratio:1;display:none;z-index:2;touch-action:none;user-select:none;-webkit-user-select:none}
 html.touch .pad{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr)}
 .pad b{display:block;background:rgba(243,223,174,.42);border:2px solid rgba(90,52,24,.6);box-sizing:border-box;position:relative}
@@ -1062,6 +1065,8 @@ addEventListener('keydown',e=>{const k=KEYMAP[e.key];if(k&&!paused&&!typing(e)){
 addEventListener('keyup',e=>{const k=KEYMAP[e.key];if(k)keys.delete(k);});
 addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&S===TITLE&&!cardEl.hidden&&cardEl.onclick&&!(document.activeElement&&document.activeElement.tagName==='BUTTON')){e.preventDefault();cardEl.onclick({target:cardEl});}});
 addEventListener('blur',()=>keys.clear());
+// on phones, a long press shouldn't select the game or pop up a menu (except in the memory form)
+['contextmenu','selectstart','dragstart'].forEach(ev=>stage.addEventListener(ev,e=>{if(!/^(INPUT|TEXTAREA)$/.test(e.target.tagName))e.preventDefault();}));
 (function(){const pad=$('#pad');const held=new Map();
   const set=(id,k)=>{const old=held.get(id);if(old===k)return;if(old)release(old);if(k){held.set(id,k);keys.add(k);pad.querySelector(`[data-k=${k}]`).classList.add('on');}};
   const release=k=>{keys.delete(k);pad.querySelector(`[data-k=${k}]`).classList.remove('on');};
