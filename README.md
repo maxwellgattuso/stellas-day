@@ -1,121 +1,54 @@
 # Stella's Day
 
+**Play it at [stellas-day.io](https://stellas-day.io/)**
+
+![Stella's Day: pixel-art Stella on the beach at sunset](share.png)
+
 A short pixel-art game about one day in the life of Stella, a very good dog.
 
-The site is just these files:
+Stella was our dog for ten years. She came to us from New York and made every place we lived
+feel like home. She loved the sun, the beach, the couch, and checking on everyone in the middle of the night.
+She was scared of a lot of things when she was young, and she got braver every year.
+We made this so we could spend one more day with her, and so you could too.
 
-| File | What it is |
-|---|---|
-| `index.html` | The game |
-| `outro.json` | Settings for the photo slideshow at the end |
-| `photos/` | The photos and video clips the slideshow can use |
+## The day
 
----
+You play as Stella, from a sunny afternoon to the next morning:
 
-## Changing the end-of-game slideshow
+- **The backyard:** sun spots, rolling in the grass, and a bunny that's always just gone.
+- **The beach:** zoomies with Maggie and Boone, Moose out swimming, and a ball that always ends up in the water.
+- **The hose:** vertical water. Not her favorite.
+- **Evening at home:** dinner, a goldfish from Dad, carpet back-scratches, and a nap on the couch with Mom.
+- **Night patrol:** the front door, the boxes, a loud drink of water, and the train going by.
+- **The bedroom:** fixing her own bed just right, then climbing in with Mom and Dad before sunrise.
+- **Morning:** back in the yard. Good day. Good dog.
 
-Everything about the slideshow lives in **`outro.json`**. You can edit it right on GitHub:
-open the file, click the **pencil** icon, make your change, then click **Commit changes**.
-The site updates about a minute later (refresh the page; on desktop use Ctrl+F5).
+It takes about ten minutes. There's no way to lose and no hurry.
 
-### How many photos play
+## How to play
 
-```json
-"howMany": 18,
-```
+- **Keyboard:** arrow keys or WASD to move.
+- **Phone or tablet:** tap where you want her to go, or use the on-screen pad.
+- **Gold paw prints** mark things to do. A **green paw print** means it's time to move on.
+- Sound is on by default; there's a button to turn it off.
 
-- Any number, like `10` or `25`.
-- `"all"` (with quotes) plays every photo in the list (videos still follow `maxVideos` below).
-- `0` skips the slideshow and goes straight to the goodbye card.
+## At the end
 
-Each play draws a fresh random set, in the order of her day.
+The game ends with a short slideshow of real photos and videos of Stella, a different handful
+each time you play. After that, you can read memories other people have shared about her
+and add one of your own. We read every memory before it appears.
 
-### Timing
+## How it's made
 
-```json
-"secondsPerPhoto": 4.2,
-"secondsPerVideo": 7,
-"maxVideos": 3,
-```
+- One HTML file with hand-drawn pixel art on a canvas: no game engine, no images for the art.
+- The music and sound effects are generated in the browser with the Web Audio API.
+- Hosted on GitHub Pages. Shared memories and the "people who have spent a day with Stella" count are stored in Supabase.
+- Nothing tracks you. The game remembers which scene you were on in your own browser, and counts each browser once.
 
-`maxVideos` caps how many video clips appear in one slideshow.
+## Thank you
 
-### Chapters (the order and the mix)
+For playing, for remembering her with us, and for every good dog you've ever loved.
 
-```json
-"chapters": [
-  { "name": "puppy", "share": 1, ... },
-  { "name": "sun",   "share": 3, ... },
-  { "name": "beach", "share": 5, ... },
-  ...
-]
-```
+With love, from Stella's Mom and Dad.
 
-Chapters play in the order listed. `share` is how much of the slideshow each chapter gets,
-relative to the others. With the defaults, beach gets about 5 out of every 18 picks.
-Set a share to `0` to leave a chapter out. You can add your own chapter by giving photos a
-new chapter name; it plays after the listed ones.
-
-### The photo list
-
-Each photo is one line:
-
-```json
-{ "file": "2023-05-14_lying-in-the-backyard-grass_01.jpg", "chapter": "sun", "caption": "Warm spot. Mine." },
-```
-
-- **Change a caption:** edit the text in `"caption"`.
-- **Move a photo to another chapter:** change `"chapter"`.
-- **Always include a photo:** add `"pin": true`
-  `{ "file": "...", "chapter": "beach", "caption": "...", "pin": true },`
-- **Hide a photo without deleting it:** add `"skip": true`
-- **Remove a photo:** delete its whole line.
-- **No caption:** use `"caption": ""`
-
-### Adding a new photo or video
-
-1. In the repo, open the **`photos`** folder, then **Add file → Upload files**, and drop the picture in.
-   JPG works best. Photos straight off a phone are fine, but smaller files load faster;
-   around 1 MB or less is ideal. Short MP4 clips (under ~15 seconds) work too and play silently.
-2. Open `outro.json` and add a line to the list with the exact file name:
-   `{ "file": "my-new-photo.jpg", "chapter": "home", "caption": "New thought here." },`
-3. Commit.
-
-### Avoiding typos
-
-`outro.json` is picky about punctuation:
-
-- Every line in the list ends with a comma **except the last one**.
-- Text goes in straight double quotes `"like this"`.
-- `true`, `false` and numbers don't get quotes.
-
-If something's off, the game still works but skips the slideshow and goes straight to the
-goodbye card. To see exactly what's wrong, open the game and press the **`** key (top-left of
-the keyboard) to show the debug bar; the first line tells you whether `outro.json` loaded and,
-if not, roughly where the typo is.
-
----
-
-## Debug bar
-
-Press **`** (backtick) to show or hide it. It lets you jump to any chapter, preview the
-slideshow, and check that `outro.json` loaded. It stays hidden for everyone else.
-
----
-
-## Shared memories and the play count
-
-The end screen lets anyone share a memory of Stella, and shows how many people have
-"spent a day with Stella" (also on the title screen). These live in a free
-[Supabase](https://supabase.com/dashboard) project called **stellas-day**.
-
-- **Nothing shows up until you approve it.** New memories wait in the `memories` table with
-  `approved` set to `false`. The person who wrote one still sees it on their own screen.
-- **To approve:** open the Supabase dashboard → stellas-day → **Table Editor** → `memories`,
-  and tick `approved` on the ones you want shown. Un-tick to hide one again, or delete the row.
-- **The count** goes up once per browser, the first time someone starts the game.
-- **Built-in limits:** 300 characters, no links, a few memories per person per day.
-- **Keeping it awake:** free Supabase projects pause after a quiet week. The
-  `Keep memories awake` workflow (in the repo's Actions tab) checks in once a day so that
-  doesn't happen. If the project ever pauses, the game still works; the memories and count
-  just hide until you click **Resume project** in the dashboard.
+*The photos and videos of Stella are ours. Please don't reuse them.*
