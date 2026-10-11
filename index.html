@@ -676,14 +676,19 @@ function card(title,paras,buttons,opts){ // buttons: [[label, fn, alt?], ...] or
 }
 function save(i){try{localStorage.setItem('stellas-day',String(i));}catch(e){}}
 function go(i){OUTRO_MUSIC=false;
-  sceneIdx=i;S=SCENES[i];S.spots.forEach(h=>{h.done=false;h.rearm=false;h.finished=false;if('stage' in h)h.stage=0;});S.leaving=false;S.announced=false;timers=[];
+  sceneIdx=i;S=SCENES[i];S.spots.forEach(h=>{h.done=false;h.rearm=false;h.finished=false;if('stage' in h)h.stage=0;});S.leaving=false;S.announced=false;timers=[];if(S.exit0){S.exit.x=S.exit0.x;S.exit.y=S.exit0.y;}
   if(i!==1&&i!==2){dog.wet=0;dog.sandy=0;}
   S.init&&S.init();dog.x=S.start.x;dog.y=S.start.y;dog.face=S.start.face||1;dog.anim=null;dog.special=null;dog.carry=false;target=null;dog.idle=0;dog.nextIdle=rnd(5,8);dog.wasInWater=false;
   camSnap();const V0=view();dogScreen={x:(dog.x-V0.x)*V0.s,y:(dog.y-18-V0.y)*V0.s};whereEl.textContent=S.name;clearSay();say(...S.intro);if(S.save!==false)save(i);
   if(!S.spots.length)checkReady();fade=1;
 }
 const ready=()=>S.spots.every(h=>h.done||h.req===false);
-function checkReady(){if(!ready()||S.announced)return;S.announced=true;if(S.readyLine)say(S.readyLine);if(S.auto&&!S.leaving){S.leaving=true;after(S.autoDelay||1.5,S.auto);}}
+// when everything's done, the green paw shows up near where she finished (except on night patrol, where the way out is the bedroom door)
+function placeExitNear(){const e=S.exit;if(!e||S.night)return;if(!S.exit0)S.exit0={x:e.x,y:e.y};const b=S.bounds,x0=dog.x,y0=dog.y;
+  const ok=(x,y)=>x>b[0]+6&&x<b[2]-6&&y>b[1]+6&&y<b[3]-4&&!(S.water&&y<S.water+10)&&!(S.solid||[]).some(([sx,sy,sw,sh])=>x>sx-8&&x<sx+sw+8&&y>sy-6&&y<sy+sh+6)
+    &&!S.spots.some(h=>!h.pos&&Math.hypot(h.x-x,h.y-y)<14);
+  for(const [dx,dy] of [[30,0],[-30,0],[24,16],[-24,16],[0,22],[24,-16],[-24,-16],[0,-22],[44,0],[-44,0]])if(ok(x0+dx,y0+dy)){e.x=Math.round(x0+dx);e.y=Math.round(y0+dy);return;}}
+function checkReady(){if(!ready()||S.announced)return;S.announced=true;placeExitNear();if(S.readyLine)say(S.readyLine);if(S.auto&&!S.leaving){S.leaving=true;after(S.autoDelay||1.5,S.auto);}}
 function nearPeople(){if(!S.people)return false;return S.people.some(([x,y])=>Math.hypot(dog.x-x,dog.y-y)<40);}
 
 /* ---------- scenes (320 x 200) ---------- */
